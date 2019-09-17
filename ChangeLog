@@ -1,4 +1,208 @@
-=== lxi-tools v1.16 ===
+=== lxi-tools v1.21 ===
+
+
+
+Changes since lxi-tools v1.20:
+
+ * Fix handling of question commands in interactive mode
+
+
+
+Changes since lxi-tools v1.19:
+
+ * Add bash completion for snap
+
+ * Update README
+
+   Add tested instrument Keysight AWG 33612A as tested by Timur Aydin.
+
+ * Add const qualifier
+
+ * Update AUTHORS
+
+ * Require Lua 5.1 or newer
+
+ * Include test dir in distribution
+
+ * Update Travis
+
+ * Fix bash completion for run command
+
+ * Update basic-tests.lua
+
+ * Move test directory
+
+ * Add basic Lua tests
+
+
+
+Changes since lxi-tools v1.18:
+
+ * Downgrade to Lua 5.2
+
+ * Update Travis configuration
+
+ * Add Lua scripting feature to support automation
+
+   Add run command which makes it possible to run Lua scripts to support
+   advanced instrument automation.
+
+   To run a Lua script simply do:
+   $ lxi run test.lua
+
+   The following LXI specific Lua functions are added and made available
+   for use in the Lua scripts:
+
+   device = connect(ip)
+   scpi(device, command)
+   scpi_raw(device, command)
+   msleep(miliseconds)
+   sleep(seconds)
+   disconnect(device)
+
+   See src/test/test.lua for a simple Lua script example.
+
+ * Update README
+
+ * Update AUTHORS
+
+ * Improve regex of rs-hmo-rtb screenshot plugin
+
+   Include instruments made with "HAMEG" identifier.
+
+ * README: Add sponsors section
+
+ * lxi-gui: Fix snap build
+
+ * configure: use pkg-config to check for Qt5
+
+ * lxi-gui: Cleanup Qt5 configuration
+
+ * Reconfigure R&S screenshot plugin to BMP
+
+ * Add RTB2004 to list of tested instruments
+
+Dmitri Goutnik:
+
+ * Use QT_SELECT value instead of hardcoded QT version
+
+
+
+Changes since lxi-tools v1.17:
+
+ * lxi-gui: Add X-axis title to data recorder chart
+
+ * lxi-gui: Fix data recorder chart colors and csv export
+
+ * lxi-gui: Add SCPI 1999.0 commands
+
+ * lxi-gui: Add data recorder save data feauture
+
+   Add a save button which allows to save recorded data to file in CSV
+   format.
+
+ * lxi: Increase default discover mDNS timeout
+
+ * lxi-gui: Optimize data recorder plotting
+
+ * lxi-gui: Fix arm snap build
+
+ * lxi-gui: Print machine type during qmake build
+
+ * lxi-gui: Remove *OPT? SCPI command
+
+ * lxi-gui: Use elapsed real time in data recorder
+
+ * lxi-gui: Print SCPI command requests
+
+ * Add screenshot support for RTB 2000
+
+ * Cleanup timeout handling, etc.
+
+ * lxi-gui: Reduce minimum window size
+
+ * Add support for adding custom Qt qmake arguments
+
+   Add QMAKE_ARGUMENTS flag which allows to pass on arguments to qmake when
+   building lxi-gui.
+
+ * lxi-gui: Make sure to call QT5 qmake
+
+
+
+Changes since lxi-tools v1.16:
+
+ * lxi-gui: Add input dialog for *ESE and *SRE commands
+
+ * lxi-gui: Fix qmake compile flags
+
+ * lxi-gui: Start with SCPI page
+
+ * Add configure check for Qt5Charts
+
+ * lxi-gui: Cleanup
+
+   Name UI elements accordingly
+
+ * lxi-gui: Add screenshot live view
+
+ * Update README screenshot
+
+ * lxi-gui: Add ID/IP instrument table header
+
+ * lxi-gui: Tag as BETA
+
+ * Update README
+
+   Introduce lxi-gui and include screenshot.
+
+ * Link QT5 Charts manually
+
+   To avoid build issue with snap.
+
+ * lxi-gui: Add data recorder feature
+
+ * lxi-gui: Add settings
+
+ * lxi-gui: Add QT5 source files
+
+ * lxi-gui: Introduce responsive layout
+
+   The lxi-gui application can now automatically resize to fit any window
+   size.
+
+ * lxi-gui: Add 'Open in browser' right-click feature
+
+ * lxi-gui: Add IEEE 488.2 Common Commands
+
+ * lxi-gui: Add about details
+
+ * lxi-gui: Add screenshot feature
+
+ * lxi-gui: Add benchmark feature
+
+ * Split features into separate files
+
+ * Update README
+
+ * Update lxi-gui
+
+ * Add keysight-dmm screenshot plugin
+
+   This plugin supports Keysight Truevolt digital multimeters.
+
+ * Set default discover timeout to 1 s
+
+ * Add experimental QT5 GUI
+
+   Can be enabled using configure option --enable-lxi-gui
+
+   Requires QT 5.0.0 or newer.
+
+ * Cleanup
+
+ * Update Travis
+
 
 
 Changes since lxi-tools v1.15:
@@ -452,3 +656,4 @@ Changes since lxi-tools v1.0:
 lxi-tools v1.0:
 
  * First release (stable)
+ 

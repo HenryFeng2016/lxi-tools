@@ -13,10 +13,24 @@ All features are consolidated in the 'lxi' application which provides a simple
 commandline interface to discover LXI instruments, send SCPI commands, and
 capture screenshots from supported LXI instruments.
 
+Also provided is a GUI application which provide some of the features of the
+commandline tool.
+
 lxi-tools rely on liblxi for all communication.
 
 
 ## 2. Usage
+
+### 2.1 lxi-gui (BETA)
+
+<p align="center">
+<img src="images/lxi-gui-beta.png">
+</p>
+
+The lxi-gui application provides some of the same features as the commandline
+tool but presents them in a GUI frontend.
+
+### 2.2 lxi
 
 The commandline interface of the lxi application is described in the output
 from 'lxi --help':
@@ -59,7 +73,7 @@ from 'lxi --help':
        -r, --raw                            Use raw/TCP
 ```
 
-### 2.1 Example - Discover LXI devices on available networks
+#### 2.2.1 Example - Discover LXI devices on available networks
 
 ```
      $ lxi discover
@@ -74,7 +88,7 @@ from 'lxi --help':
      Found 2 devices
 ```
 
-### 2.2 Example - Send SCPI command to an instrument
+#### 2.2.2 Example - Send SCPI command to an instrument
 
 ```
      $ lxi scpi --address 10.42.1.20 "*IDN?"
@@ -85,7 +99,7 @@ To dump response to file simply do:
      $ lxi scpi --address 10.42.1.20 "*IDN?" > response.txt
 ```
 
-### 2.3 Example - Capture screenshot from a Rigol 1000z series oscilloscope
+#### 2.2.3 Example - Capture screenshot from a Rigol 1000z series oscilloscope
 
 ```
      $ lxi screenshot --address 10.42.1.20 --plugin rigol-1000z
@@ -100,7 +114,7 @@ Or using plugin autodetection simply:
      Saved screenshot image to screenshot_10.42.1.20_2017-11-11_13:46:02.png
 ```
 
-### 2.4 Example - Capture screenshot and convert it to any image format
+#### 2.2.4 Example - Capture screenshot and convert it to any image format
 
 By default the format of the captured screenshot image is dictated by which
 screenshot plugin and instrument are in play. However, it is possible to write
@@ -114,7 +128,7 @@ image to JPG:
     $ lxi screenshot --address 10.42.1.20 - | convert - screenshot.jpg
 ```
 
-### 2.5 Example - List available screenshot plugins
+#### 2.2.5 Example - List available screenshot plugins
 
 ```
      $ lxi screenshot --list
@@ -134,7 +148,7 @@ image to JPG:
        tektronix-2000   Tektronix DPO/MSO 2000 series oscilloscope (experimental)
 ```
 
-### 2.6 Example - Benchmark instrument request/response performance
+#### 2.2.6 Example - Benchmark instrument request/response performance
 
 ```
      $ lxi benchmark --address 10.42.1.20
@@ -146,7 +160,17 @@ image to JPG:
 
 The latest release version can be downloaded from https://lxi-tools.github.io
 
-### 3.1 Installation using release tarball
+### 3.1 Installation using source
+
+To compile and install successfully from source you need to install the
+following dependencies:
+
+ * liblxi
+ * lua
+ * Qt5Core     (optional)
+ * Qt5Gui      (optional)
+ * Qt5Widgets  (optional)
+ * Qt5Charts   (optional)
 
 Install steps:
 ```
@@ -155,13 +179,16 @@ Install steps:
     $ make install
 ```
 
-Note: lxi-tools depends on liblxi so you need to go install liblxi first.
+Note: Please do no try to install from source if you are not familiar with
+using autotools.
+
+Note: If you are installing from git source remember to run the autogen.sh
+script to generate the configure script.
 
 ### 3.2 Installation using package
 
 lxi-tools comes prepackaged for various GNU/Linux distributions. Visit
 https://lxi-tools.github.io to see list of supported distributions.
-
 
 ## 4. Tested instruments
 
@@ -170,7 +197,10 @@ compatible instruments:
 
 | Instrument                        | Working features           |
 |-----------------------------------|----------------------------|
+| Keysight Technologies AWG 33612A  | (discover+scpi+screenshot) |
+| Keysight Technologies DMM 34461A  | (discover+scpi+screenshot) |
 | Keysight Technologies MSO-X 3024T | (discover+scpi+screenshot) |
+| Kikusui Electronics PMX35-3A      | (discover+scpi)            |
 | Rigol Technologies DG4062         | (discover+scpi+screenshot) |
 | Rigol Technologies DG4102         | (discover+scpi+screenshot) |
 | Rigol Technologies DG4162         | (discover+scpi+screenshot) |
@@ -182,7 +212,12 @@ compatible instruments:
 | Rigol Technologies DSA815         | (discover+scpi+screenshot) |
 | Rigol Technologies MSO1104Z       | (discover+scpi+screenshot) |
 | Rigol Technologies MSO2302A       | (discover+scpi+screenshot) |
+| Rigol Technologies MSO5074        | (discover+scpi+screenshot) |
+| Rohde & Schwarz HMC 8012          | (discover+scpi+screenshot) |
+| Rohde & Schwarz HMC 8043          | (discover+scpi+screenshot) |
 | Rohde & Schwarz HMO 1202          | (discover+scpi+screenshot) |
+| Rohde & Schwarz HMO 3054          | (scpi+screenshot)          |
+| Rohde & Schwarz RTB 2004          | (discover+scpi+screenshot) |
 | Siglent Technologies SDG1032X     | (discover+scpi+screenshot) |
 | Siglent Technologies SDG2122X     | (discover+scpi+screenshot) |
 | Siglent Technologies SDG6052      | (discover+scpi+screenshot) |
@@ -213,20 +248,26 @@ a donation:
 
 [![Donate](https://www.paypal.com/en_US/i/btn/x-click-but21.gif)](https://www.paypal.me/lundmar)
 
-
 ## 6. Website
 
 Visit https://lxi-tools.github.io
-
 
 ## 7. License
 
 This code is released under BSD-3, commonly known as the 3-clause (or
 "modified") BSD license.
 
-
 ## 8. Authors
 
-Created by Martin Lund \<martin.lund@keep-it-simple.com>
+Created and maintained by Martin Lund \<martin.lund@keep-it-simple.com>
 
 See the AUTHORS file for full list of authors.
+
+## 9. Sponsors
+
+A thank you to the following sponsors that have donated test equipment to
+support the lxi-tools open source effort:
+
+ * Siglent Technologies
+ * KIKUSUI Electronics Corp.
+

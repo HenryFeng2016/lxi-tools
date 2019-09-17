@@ -2,6 +2,20 @@
 # Bash completion script for lxi
 #
 
+get_firstword() {
+    local firstword i
+
+    firstword=
+    for ((i = 1; i < ${#COMP_WORDS[@]}; ++i)); do
+        if [[ ${COMP_WORDS[i]} != -* ]]; then
+            firstword=${COMP_WORDS[i]}
+            break
+        fi
+    done
+
+    echo $firstword
+}
+
 _lxi()
 {
     local cur prev firstword opts discover_opts scpi_opts screenshot_opts
@@ -76,19 +90,5 @@ _lxi()
     return 0
 }
 
-get_firstword() {
-    local firstword i
-
-    firstword=
-    for ((i = 1; i < ${#COMP_WORDS[@]}; ++i)); do
-        if [[ ${COMP_WORDS[i]} != -* ]]; then
-            firstword=${COMP_WORDS[i]}
-            break
-        fi
-    done
-
-    echo $firstword
-}
-
-# Bind completion to lxi command
-complete -o default -F _lxi lxi
+# Bind completion to lxi-tools.lxi command
+complete -o default -F _lxi lxi-tools.lxi

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016  Martin Lund
+ * Copyright (c) 2016-2018  Martin Lund
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,46 +28,67 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OPTIONS_H
-#define OPTIONS_H
-
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include <stdbool.h>
-#include <sys/param.h>
+#include <string.h>
+#include <time.h>
+#include <ctype.h>
+#include "error.h"
 #include <lxi.h>
 
-/* Options */
-struct option_t
+static int device_count = 0;
+static int service_count = 0;
+
+static void broadcast(const char *address, const char *interface)
 {
-    int command;
-    int timeout;
-    char ip[500];
-    char scpi_command[500];
-    bool hex;
-    bool interactive;
-    bool run_script;
-    char *script_filename;
-    char lua_script_filename[1000];
-    char *plugin_name;
-    bool list;
-    char screenshot_filename[1000];
-    lxi_protocol_t protocol;
-    int port;
-    bool mdns;
-    int count;
-};
+    printf("Broadcasting on interface %s\n", interface);
+}
 
-enum command_t
+static void device(const char *address, const char *id)
 {
-    DISCOVER,
-    SCPI,
-    SCREENSHOT,
-    BENCHMARK,
-    RUN,
-    NO_COMMAND
-};
+    printf("  Found \"%s\" on address %s\n", id, address);
+    device_count++;
+}
 
-extern struct option_t option;
+static void service(const char *address, const char *id, const char *service, int port)
+{
+    printf("  Found \"%s\" on address %s\n    %s service on port %u\n", id, address, service, port);
+    service_count++;
+}
 
-void parse_options(int argc, char *argv[]);
+int discover(bool mdns, int timeout)
+{
+    lxi_info_t info;
 
-#endif
+    // Set up info callbacks
+    info.broadcast = &broadcast;
+    info.device = &device;
+    info.service = &service;
+
+    printf("Searching for LXI devices - please wait...\n\n");
+
+    // Search for LXI devices / services
+    if (mdns)
+    {
+        lxi_discover(&info, timeout, DISCOVER_MDNS);
+        if (service_count == 0)
+            printf("No services found\n");
+        else
+            printf("\nFound %d service%c\n", service_count, service_count > 1 ? 's' : ' ');
+    }
+    else
+    {
+        lxi_discover(&info, timeout, DISCOVER_VXI11);
+        printf("\n");
+        if (device_count == 0)
+            printf("No devices found\n");
+        else
+            printf("Found %d device%c\n", device_count, device_count > 1 ? 's' : ' ');
+    }
+
+    printf("\n");
+
+    return 0;
+}

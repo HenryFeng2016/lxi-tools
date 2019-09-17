@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016  Martin Lund
+ * Copyright (c) 2016-2018  Martin Lund
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,47 +27,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef SCPI_H
+#define SCPI_H
 
-#ifndef OPTIONS_H
-#define OPTIONS_H
+#ifdef __cplusplus
+extern "C" {
+#endif
 
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include <stdbool.h>
-#include <sys/param.h>
+#include <string.h>
+#include <time.h>
+#include <ctype.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+#include "options.h"
+#include "error.h"
 #include <lxi.h>
 
-/* Options */
-struct option_t
-{
-    int command;
-    int timeout;
-    char ip[500];
-    char scpi_command[500];
-    bool hex;
-    bool interactive;
-    bool run_script;
-    char *script_filename;
-    char lua_script_filename[1000];
-    char *plugin_name;
-    bool list;
-    char screenshot_filename[1000];
-    lxi_protocol_t protocol;
-    int port;
-    bool mdns;
-    int count;
-};
+int scpi(char *ip, int port, int timeout, lxi_protocol_t protocol, char *command);
+int enter_interactive_mode(char *ip, int port, int timeout, lxi_protocol_t protocol);
+int run_script(char *ip, int port, int timeout, lxi_protocol_t protocol, char *filename);
 
-enum command_t
-{
-    DISCOVER,
-    SCPI,
-    SCREENSHOT,
-    BENCHMARK,
-    RUN,
-    NO_COMMAND
-};
+void strip_trailing_space(char *line);
+int question(char *string);
 
-extern struct option_t option;
-
-void parse_options(int argc, char *argv[]);
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -6,14 +6,20 @@
 static MainWindow *main_window;
 static lxi_info_t lxi_info;
 
-void broadcast(char *address, char *interface)
+void benchmark_progress(void)
 {
-    std::cout << "Broadcasting on interface " << interface << std::endl;
+    main_window->update_progressbar();
 }
 
-void device(char *address, char *id)
+void broadcast(__attribute__((unused)) const char *address, const char *interface)
 {
-    std::cout << " Found " << id << " on address " << address << std::endl;
+    std::string broadcast_message = "Broadcasting on interface "
+                                    + std::string(interface);
+    main_window->update_statusbar(broadcast_message.c_str());
+}
+
+void device(const char *address, const char *id)
+{
     main_window->add_instrument(id, address);
 }
 
@@ -22,18 +28,15 @@ void lxi_setup(void)
     // Initialize LXI library
     lxi_init();
 
-    // Set up search information callbacks
+    // Setup search information callbacks
     lxi_info.broadcast = &broadcast;
     lxi_info.device = &device;
 }
 
-void lxi_discover_(void)
+void lxi_discover_(int timeout, lxi_discover_t type)
 {
-    // Search for LXI devices, 1 second timeout
-    lxi_discover(&lxi_info, 1000, DISCOVER_VXI11);
-
-    // Reset push button text
-    main_window->pushButton_reset();
+    // Search for LXI devices
+    lxi_discover(&lxi_info, timeout, type);
 }
 
 int main(int argc, char *argv[])
@@ -41,10 +44,15 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
 
+    // Setup lxi library
     lxi_setup();
+
     main_window = &w;
 
     w.show();
+
+    // Make sure things are resized correctly at startup
+    w.resize();
 
     return a.exec();
 }

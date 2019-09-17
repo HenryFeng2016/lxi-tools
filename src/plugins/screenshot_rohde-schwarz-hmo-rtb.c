@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016  Martin Lund
+ * Copyright (c) 2017  Martin Lund
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,46 +28,67 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OPTIONS_H
-#define OPTIONS_H
-
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include <stdbool.h>
-#include <sys/param.h>
+#include <string.h>
+#include <ctype.h>
 #include <lxi.h>
+#include "error.h"
+#include "screenshot.h"
 
-/* Options */
-struct option_t
+#define IMAGE_SIZE_MAX 0x400000 // 4 MB
+
+int rs_hmo_rtb_screenshot(char *address, int timeout)
 {
-    int command;
-    int timeout;
-    char ip[500];
-    char scpi_command[500];
-    bool hex;
-    bool interactive;
-    bool run_script;
-    char *script_filename;
-    char lua_script_filename[1000];
-    char *plugin_name;
-    bool list;
-    char screenshot_filename[1000];
-    lxi_protocol_t protocol;
-    int port;
-    bool mdns;
-    int count;
-};
+    char response[IMAGE_SIZE_MAX];
+    char *command, *image;
+    int device, length, n;
+    char c;
 
-enum command_t
+    // Connect to LXI instrument
+    device = lxi_connect(address, 0, NULL, timeout, VXI11);
+    if (device == LXI_ERROR)
+    {
+        error_printf("Failed to connect\n");
+        return 1;
+    }
+
+    // Send SCPI commands to grab image
+    command = "HCOPy:FORMat BMP";
+    lxi_send(device, command, strlen(command), timeout);
+    command = "HCOPy:DATA?";
+    lxi_send(device, command, strlen(command), timeout);
+    length = lxi_receive(device, response, IMAGE_SIZE_MAX, timeout);
+    if (length < 0)
+    {
+        error_printf("Failed to receive message\n");
+        return 1;
+    }
+
+    // Strip header
+    c = response[1];
+    n = atoi(&c);
+    image = &response[0];
+    image += n+2;
+    length -= n+2;
+
+    // Dump remaining image data to file
+    screenshot_file_dump(image, length, "bmp");
+
+    // Disconnect
+    lxi_disconnect(device);
+
+    return 0;
+}
+
+
+// Screenshot plugin configuration
+struct screenshot_plugin rs_hmo_rtb =
 {
-    DISCOVER,
-    SCPI,
-    SCREENSHOT,
-    BENCHMARK,
-    RUN,
-    NO_COMMAND
+    .name = "rs-hmo-rtb",
+    .description = "Rohde & Schwarz HMO 1000/2000/3000 / RTB 2000 series oscilloscope",
+    .regex = "Rohde&Schwarz HAMEG HMO[123]... RTB2...",
+    .screenshot = rs_hmo_rtb_screenshot
 };
-
-extern struct option_t option;
-
-void parse_options(int argc, char *argv[]);
-
-#endif

@@ -27,10 +27,20 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef SCREENSHOT_H
+#define SCREENSHOT_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <stdbool.h>
 
 void screenshot_register_plugins(void);
 void screenshot_list_plugins(void);
-int screenshot(char *address, char *plugin_name, char *filename, int timeout);
+int screenshot(char *address, char *plugin_name, char *filename,
+               int timeout, bool no_gui, void *image_buffer,
+               int *image_size, char *image_format, char *image_filename);
 
 // Screenshot helper function used by plugins to dump image file
 void screenshot_file_dump(void *data, int length, char *format);
@@ -42,3 +52,9 @@ struct screenshot_plugin
    const char *regex;
    int (*screenshot)(char *address, int timeout);
 };
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
